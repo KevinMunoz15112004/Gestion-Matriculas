@@ -405,9 +405,3 @@ Todas las rutas de creación y actualización incluyen validaciones:
 # Iniciar el servidor
 npm start
 ```
-
----
-
-## 📄 Licencia
-
-ISC
