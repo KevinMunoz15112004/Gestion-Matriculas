@@ -3,10 +3,8 @@ import jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 import Usuario from '../models/Usuario.js';
 
-// Registrar un nuevo usuario
 export const registrarUsuario = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -17,7 +15,6 @@ export const registrarUsuario = async (req, res) => {
 
     const { nombre, apellido, email, password } = req.body;
 
-    // Verificar si el usuario ya existe
     const usuarioExistente = await Usuario.findOne({ email });
     if (usuarioExistente) {
       return res.status(400).json({ 
@@ -25,11 +22,9 @@ export const registrarUsuario = async (req, res) => {
       });
     }
 
-    // Hashear la contraseña
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Crear el nuevo usuario
     const nuevoUsuario = new Usuario({
       nombre,
       apellido,
@@ -57,10 +52,8 @@ export const registrarUsuario = async (req, res) => {
   }
 };
 
-// Iniciar sesión
 export const iniciarSesion = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -71,7 +64,6 @@ export const iniciarSesion = async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Buscar el usuario por email
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
       return res.status(401).json({ 
@@ -79,7 +71,6 @@ export const iniciarSesion = async (req, res) => {
       });
     }
 
-    // Verificar la contraseña
     const esPasswordValida = await bcrypt.compare(password, usuario.password);
     if (!esPasswordValida) {
       return res.status(401).json({ 
@@ -87,7 +78,6 @@ export const iniciarSesion = async (req, res) => {
       });
     }
 
-    // Generar el token JWT
     const token = jwt.sign(
       { id: usuario._id, email: usuario.email },
       process.env.JWT_SECRET,
@@ -113,7 +103,6 @@ export const iniciarSesion = async (req, res) => {
   }
 };
 
-// Obtener perfil del usuario autenticado
 export const obtenerPerfil = async (req, res) => {
   try {
     res.status(200).json({ 

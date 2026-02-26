@@ -1,10 +1,8 @@
 import { validationResult } from 'express-validator';
 import Estudiante from '../models/Estudiante.js';
 
-// Crear un nuevo estudiante
 export const crearEstudiante = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -15,7 +13,6 @@ export const crearEstudiante = async (req, res) => {
 
     const { nombre, apellido, cedula, fecha_nacimiento, ciudad, direccion, telefono, email } = req.body;
 
-    // Verificar si el estudiante ya existe (por cédula o email)
     const estudianteExistente = await Estudiante.findOne({ 
       $or: [{ cedula }, { email }] 
     });
@@ -33,7 +30,6 @@ export const crearEstudiante = async (req, res) => {
       }
     }
 
-    // Crear el nuevo estudiante
     const nuevoEstudiante = new Estudiante({
       nombre,
       apellido,
@@ -60,7 +56,6 @@ export const crearEstudiante = async (req, res) => {
   }
 };
 
-// Obtener todos los estudiantes
 export const obtenerEstudiantes = async (req, res) => {
   try {
     const estudiantes = await Estudiante.find().sort({ createdAt: -1 });
@@ -79,7 +74,6 @@ export const obtenerEstudiantes = async (req, res) => {
   }
 };
 
-// Obtener un estudiante por ID
 export const obtenerEstudiantePorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -109,10 +103,8 @@ export const obtenerEstudiantePorId = async (req, res) => {
   }
 };
 
-// Actualizar un estudiante
 export const actualizarEstudiante = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -124,7 +116,6 @@ export const actualizarEstudiante = async (req, res) => {
     const { id } = req.params;
     const { nombre, apellido, cedula, fecha_nacimiento, ciudad, direccion, telefono, email } = req.body;
 
-    // Verificar si el estudiante existe
     const estudiante = await Estudiante.findById(id);
     if (!estudiante) {
       return res.status(404).json({ 
@@ -132,7 +123,6 @@ export const actualizarEstudiante = async (req, res) => {
       });
     }
 
-    // Verificar si la cédula o email ya existen en otro estudiante
     if (cedula || email) {
       const estudianteExistente = await Estudiante.findOne({ 
         _id: { $ne: id },
@@ -156,7 +146,6 @@ export const actualizarEstudiante = async (req, res) => {
       }
     }
 
-    // Actualizar el estudiante
     const estudianteActualizado = await Estudiante.findByIdAndUpdate(
       id,
       { nombre, apellido, cedula, fecha_nacimiento, ciudad, direccion, telefono, email },
@@ -181,7 +170,6 @@ export const actualizarEstudiante = async (req, res) => {
   }
 };
 
-// Eliminar un estudiante
 export const eliminarEstudiante = async (req, res) => {
   try {
     const { id } = req.params;

@@ -3,10 +3,8 @@ import Matricula from '../models/Matricula.js';
 import Estudiante from '../models/Estudiante.js';
 import Materia from '../models/Materia.js';
 
-// Crear una nueva matrícula
 export const crearMatricula = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -17,7 +15,6 @@ export const crearMatricula = async (req, res) => {
 
     const { codigo, descripcion, creditos, materia, estudiante } = req.body;
 
-    // Verificar si el código ya existe
     const matriculaExistente = await Matricula.findOne({ codigo: codigo.toUpperCase() });
     if (matriculaExistente) {
       return res.status(400).json({ 
@@ -41,7 +38,6 @@ export const crearMatricula = async (req, res) => {
       });
     }
 
-    // Verificar si ya existe una matrícula para este estudiante en esta materia
     const matriculaDuplicada = await Matricula.findOne({ 
       materia, 
       estudiante 
@@ -53,7 +49,6 @@ export const crearMatricula = async (req, res) => {
       });
     }
 
-    // Crear la nueva matrícula
     const nuevaMatricula = new Matricula({
       codigo: codigo.toUpperCase(),
       descripcion,
@@ -64,7 +59,6 @@ export const crearMatricula = async (req, res) => {
 
     await nuevaMatricula.save();
 
-    // Poblar los datos para la respuesta
     await nuevaMatricula.populate('materia');
     await nuevaMatricula.populate('estudiante');
 
@@ -81,7 +75,6 @@ export const crearMatricula = async (req, res) => {
   }
 };
 
-// Obtener todas las matrículas
 export const obtenerMatriculas = async (req, res) => {
   try {
     const matriculas = await Matricula.find()
@@ -103,7 +96,6 @@ export const obtenerMatriculas = async (req, res) => {
   }
 };
 
-// Obtener una matrícula por ID
 export const obtenerMatriculaPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -135,12 +127,10 @@ export const obtenerMatriculaPorId = async (req, res) => {
   }
 };
 
-// Obtener matrículas por estudiante
 export const obtenerMatriculasPorEstudiante = async (req, res) => {
   try {
     const { estudianteId } = req.params;
 
-    // Verificar si el estudiante existe
     const estudiante = await Estudiante.findById(estudianteId);
     if (!estudiante) {
       return res.status(404).json({ 
@@ -172,12 +162,10 @@ export const obtenerMatriculasPorEstudiante = async (req, res) => {
   }
 };
 
-// Obtener matrículas por materia
 export const obtenerMatriculasPorMateria = async (req, res) => {
   try {
     const { materiaId } = req.params;
 
-    // Verificar si la materia existe
     const materia = await Materia.findById(materiaId);
     if (!materia) {
       return res.status(404).json({ 
@@ -209,10 +197,8 @@ export const obtenerMatriculasPorMateria = async (req, res) => {
   }
 };
 
-// Actualizar una matrícula
 export const actualizarMatricula = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -224,7 +210,6 @@ export const actualizarMatricula = async (req, res) => {
     const { id } = req.params;
     const { codigo, descripcion, creditos, materia, estudiante } = req.body;
 
-    // Verificar si la matrícula existe
     const matricula = await Matricula.findById(id);
     if (!matricula) {
       return res.status(404).json({ 
@@ -232,7 +217,6 @@ export const actualizarMatricula = async (req, res) => {
       });
     }
 
-    // Verificar si el código ya existe en otra matrícula
     if (codigo) {
       const matriculaExistente = await Matricula.findOne({ 
         _id: { $ne: id },
@@ -246,7 +230,6 @@ export const actualizarMatricula = async (req, res) => {
       }
     }
 
-    // Si se actualiza la materia, verificar que exista
     if (materia) {
       const materiaExiste = await Materia.findById(materia);
       if (!materiaExiste) {
@@ -256,7 +239,6 @@ export const actualizarMatricula = async (req, res) => {
       }
     }
 
-    // Si se actualiza el estudiante, verificar que exista
     if (estudiante) {
       const estudianteExiste = await Estudiante.findById(estudiante);
       if (!estudianteExiste) {
@@ -266,7 +248,6 @@ export const actualizarMatricula = async (req, res) => {
       }
     }
 
-    // Verificar duplicados si se actualiza materia o estudiante
     if (materia || estudiante) {
       const matriculaDuplicada = await Matricula.findOne({ 
         _id: { $ne: id },
@@ -281,7 +262,6 @@ export const actualizarMatricula = async (req, res) => {
       }
     }
 
-    // Actualizar la matrícula
     const matriculaActualizada = await Matricula.findByIdAndUpdate(
       id,
       { 
@@ -312,7 +292,6 @@ export const actualizarMatricula = async (req, res) => {
   }
 };
 
-// Eliminar una matrícula
 export const eliminarMatricula = async (req, res) => {
   try {
     const { id } = req.params;

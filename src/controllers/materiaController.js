@@ -1,10 +1,8 @@
 import { validationResult } from 'express-validator';
 import Materia from '../models/Materia.js';
 
-// Crear una nueva materia
 export const crearMateria = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -15,7 +13,6 @@ export const crearMateria = async (req, res) => {
 
     const { nombre, codigo, descripcion, creditos } = req.body;
 
-    // Verificar si la materia ya existe por código
     const materiaExistente = await Materia.findOne({ codigo: codigo.toUpperCase() });
     if (materiaExistente) {
       return res.status(400).json({ 
@@ -23,7 +20,6 @@ export const crearMateria = async (req, res) => {
       });
     }
 
-    // Crear la nueva materia
     const nuevaMateria = new Materia({
       nombre,
       codigo: codigo.toUpperCase(),
@@ -46,7 +42,6 @@ export const crearMateria = async (req, res) => {
   }
 };
 
-// Obtener todas las materias
 export const obtenerMaterias = async (req, res) => {
   try {
     const materias = await Materia.find().sort({ createdAt: -1 });
@@ -65,7 +60,6 @@ export const obtenerMaterias = async (req, res) => {
   }
 };
 
-// Obtener una materia por ID
 export const obtenerMateriaPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,10 +89,8 @@ export const obtenerMateriaPorId = async (req, res) => {
   }
 };
 
-// Actualizar una materia
 export const actualizarMateria = async (req, res) => {
   try {
-    // Validar los datos de entrada
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -110,7 +102,6 @@ export const actualizarMateria = async (req, res) => {
     const { id } = req.params;
     const { nombre, codigo, descripcion, creditos } = req.body;
 
-    // Verificar si la materia existe
     const materia = await Materia.findById(id);
     if (!materia) {
       return res.status(404).json({ 
@@ -118,7 +109,6 @@ export const actualizarMateria = async (req, res) => {
       });
     }
 
-    // Verificar si el código ya existe en otra materia
     if (codigo) {
       const materiaExistente = await Materia.findOne({ 
         _id: { $ne: id },
@@ -132,7 +122,6 @@ export const actualizarMateria = async (req, res) => {
       }
     }
 
-    // Actualizar la materia
     const materiaActualizada = await Materia.findByIdAndUpdate(
       id,
       { 
@@ -162,7 +151,6 @@ export const actualizarMateria = async (req, res) => {
   }
 };
 
-// Eliminar una materia
 export const eliminarMateria = async (req, res) => {
   try {
     const { id } = req.params;

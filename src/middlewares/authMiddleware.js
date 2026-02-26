@@ -3,7 +3,6 @@ import Usuario from '../models/Usuario.js';
 
 export const verificarToken = async (req, res, next) => {
   try {
-    // Obtener el token del header
     const token = req.headers.authorization?.split(' ')[1];
     
     if (!token) {
@@ -12,10 +11,8 @@ export const verificarToken = async (req, res, next) => {
       });
     }
 
-    // Verificar el token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
-    // Buscar el usuario
+
     const usuario = await Usuario.findById(decoded.id).select('-password');
     
     if (!usuario) {
@@ -24,7 +21,6 @@ export const verificarToken = async (req, res, next) => {
       });
     }
 
-    // Agregar el usuario a la petición
     req.usuario = usuario;
     next();
   } catch (error) {

@@ -1,24 +1,21 @@
 import express from 'express';
 import cors from 'cors';
-import authRoutes from './src/routes/authRoutes.js';
-import estudianteRoutes from './src/routes/estudianteRoutes.js';
-import materiaRoutes from './src/routes/materiaRoutes.js';
-import matriculaRoutes from './src/routes/matriculaRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import estudianteRoutes from './routes/estudianteRoutes.js';
+import materiaRoutes from './routes/materiaRoutes.js';
+import matriculaRoutes from './routes/matriculaRoutes.js';
 
 const app = express();
 
-// Middlewares globales
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/estudiantes', estudianteRoutes);
 app.use('/api/materias', materiaRoutes);
 app.use('/api/matriculas', matriculaRoutes);
 
-// Ruta de bienvenida
 app.get('/', (req, res) => {
   res.json({ 
     mensaje: 'API Sistema de Gestión de Matrículas',
