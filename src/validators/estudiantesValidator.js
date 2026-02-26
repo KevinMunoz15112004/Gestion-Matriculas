@@ -36,6 +36,7 @@ export const validacionesEstudiante = [
         .trim(),
     body('telefono')
         .notEmpty().withMessage('El teléfono es obligatorio')
+        .isNumeric().withMessage('El teléfono debe contener solo números')
         .trim()
         .isLength({ min: 10, max: 10 }).withMessage('El teléfono debe tener exactamente 10 digitos'),
     body('email')
@@ -52,7 +53,7 @@ export const validacionesActualizarEstudiante = [
     body('fecha_nacimiento').optional().isISO8601(),
     body('ciudad').optional().trim(),
     body('direccion').optional().trim(),
-    body('telefono').optional().trim().isLength({ min: 10, max: 10 }),
+    body('telefono').optional().trim().isLength({ min: 10, max: 10 }).isNumeric(),
     body('email').optional().isEmail().normalizeEmail(),
     validarCampos
 ];
